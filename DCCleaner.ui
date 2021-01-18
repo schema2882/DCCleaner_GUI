@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DCCleaner</class>
+ <widget class="QMainWindow" name="DCCleaner">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>365</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DCCleaner</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>341</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>로그인</string>
+    </property>
+    <widget class="QPushButton" name="loginButton">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>120</y>
+       <width>281</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>로그인</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="isSaveAccount">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>160</y>
+       <width>281</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
+     <property name="text">
+      <string>로그인 정보 저장</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="idBox">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>281</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>ID</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="pwBox">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>70</y>
+       <width>281</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+     </property>
+     <property name="placeholderText">
+      <string>PW</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="loginStatus">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>200</y>
+       <width>281</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>로그인 상태 : None</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>569</y>
+      <width>361</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Made by qwertycvb(SerenityS) &lt;a href=&quot;https://github.com/SerenityS&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="openExternalLinks">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
