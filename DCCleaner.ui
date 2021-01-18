@@ -38,6 +38,12 @@
      <property name="text">
       <string>로그인</string>
      </property>
+     <property name="autoDefault">
+      <bool>true</bool>
+     </property>
+     <property name="default">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QCheckBox" name="isSaveAccount">
      <property name="geometry">
@@ -70,6 +76,9 @@
      <property name="placeholderText">
       <string>ID</string>
      </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLineEdit" name="pwBox">
      <property name="geometry">
@@ -80,11 +89,17 @@
        <height>31</height>
       </rect>
      </property>
+     <property name="frame">
+      <bool>true</bool>
+     </property>
      <property name="echoMode">
       <enum>QLineEdit::PasswordEchoOnEdit</enum>
      </property>
      <property name="placeholderText">
       <string>PW</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="loginStatus">
