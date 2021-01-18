@@ -40,6 +40,7 @@ class MyWindow(QMainWindow, form_class):
         self.loginButton.clicked.connect(self.dcLogin)
         self.idBox.returnPressed.connect(self.focusEvent)
         self.pwBox.returnPressed.connect(self.loginButton.click)
+        self.idBox.setFocus()
 
     def closeEvent(self, event):
         result = QMessageBox.question(self, 'Are you sure to Exit?',
