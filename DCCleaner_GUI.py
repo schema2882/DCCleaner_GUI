@@ -38,6 +38,8 @@ class MyWindow(QMainWindow, form_class):
         self.loadConf()
         self.isSaveAccount.stateChanged.connect(self.mgrAccount)
         self.loginButton.clicked.connect(self.dcLogin)
+        self.idBox.returnPressed.connect(self.focusEvent)
+        self.pwBox.returnPressed.connect(self.loginButton.click)
 
     def closeEvent(self, event):
         result = QMessageBox.question(self, 'Are you sure to Exit?',
@@ -47,6 +49,12 @@ class MyWindow(QMainWindow, form_class):
             event.accept()
         else:
             event.ignore()
+
+    def focusEvent(self):
+        if self.pwBox.text():
+            self.loginButton.click()
+        else:
+            self.pwBox.setFocus()
 
     def loadConf(self):
         self.config.read("settings.conf")
