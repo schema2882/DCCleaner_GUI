@@ -144,8 +144,8 @@ class MyWindow(QMainWindow, form_class):
     def devInfoMsg(self):
         alertMsgBox("개발자 정보", "Dev : qwertycvb(SerenityS)<br>E-Mail : jins4218@gmail.com<br>Github : <a href='https://github.com/SerenityS'>https://github.com/SerenityS</a><br><br><a href='https://github.com/augustapple/ThanosCleaner'>Inspired by ThanosCleaner</a>")
 
-
-app = QApplication(sys.argv)
-window = MyWindow()
-window.show()
-app.exec_()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    app.exec_()
