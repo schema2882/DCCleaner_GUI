@@ -38,6 +38,7 @@ class MyWindow(QMainWindow, form_class):
         self.loadConf()
         self.isSaveAccount.stateChanged.connect(self.mgrAccount)
         self.loginButton.clicked.connect(self.dcLogin)
+        self.devInfoButton.clicked.connect(self.devInfoMsg)
         self.idBox.returnPressed.connect(self.focusEvent)
         self.pwBox.returnPressed.connect(self.loginButton.click)
         self.idBox.setFocus()
@@ -139,6 +140,9 @@ class MyWindow(QMainWindow, form_class):
     def writeConf(self):
         with open('settings.conf', 'w') as conf:
             self.config.write(conf)
+
+    def devInfoMsg(self):
+        alertMsgBox("개발자 정보", "Dev : qwertycvb(SerenityS)<br>E-Mail : jins4218@gmail.com<br>Github : <a href='https://github.com/SerenityS'>https://github.com/SerenityS</a><br><br><a href='https://github.com/augustapple/ThanosCleaner'>Inspired by ThanosCleaner</a>")
 
 
 app = QApplication(sys.argv)
