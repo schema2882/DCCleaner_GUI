@@ -283,6 +283,7 @@ class MyWindow(QMainWindow, form_class):
         self.delCommentButton.clicked.disconnect()
         self.delCommentButton.clicked.connect(self.cancelCommentDelProcess)
         self.delPostButton.setDisabled(True)
+        self.loginButton.setDisabled(True)
 
         dcid = self.idBox.text()
         idx = self.commentGallList.currentIndex()
@@ -298,6 +299,7 @@ class MyWindow(QMainWindow, form_class):
         self.delPostButton.clicked.disconnect()
         self.delPostButton.clicked.connect(self.cancelPostDelProcess)
         self.delCommentButton.setDisabled(True)
+        self.loginButton.setDisabled(True)
 
         dcid = self.idBox.text()
         idx = self.commentGallList.currentIndex()
@@ -401,6 +403,7 @@ class MyWindow(QMainWindow, form_class):
         self.delCommentButton.clicked.disconnect()
         self.delCommentButton.clicked.connect(self.cleanComment)
         self.delPostButton.setDisabled(False)
+        self.loginButton.setDisabled(False)
 
     def cancelPostDelProcess(self):
         self.delProcess = False
@@ -411,6 +414,7 @@ class MyWindow(QMainWindow, form_class):
         self.delPostButton.clicked.disconnect()
         self.delPostButton.clicked.connect(self.cleanPost)
         self.delCommentButton.setDisabled(False)
+        self.loginButton.setDisabled(False)
 
     def mgrAccount(self):
         if self.isSaveAccount.isChecked():
