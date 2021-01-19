@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>372</width>
-    <height>600</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -123,7 +123,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>547</y>
+      <y>570</y>
       <width>301</width>
       <height>48</height>
      </rect>
@@ -159,7 +159,7 @@
       <x>10</x>
       <y>250</y>
       <width>341</width>
-      <height>141</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="title">
@@ -206,15 +206,15 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>400</y>
+      <y>410</y>
       <width>341</width>
-      <height>141</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="title">
      <string>댓글 클리너</string>
     </property>
-    <widget class="QComboBox" name="postGallList_2">
+    <widget class="QComboBox" name="commentGallList">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -224,7 +224,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLabel" name="totalPost_2">
+    <widget class="QLabel" name="totalComment">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -237,7 +237,7 @@
       <string>전체 댓글 :</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="delPost_2">
+    <widget class="QPushButton" name="delComment">
      <property name="geometry">
       <rect>
        <x>30</x>
