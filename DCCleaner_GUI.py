@@ -1,7 +1,11 @@
+import json
+import threading
+
 import lxml.html
 import re
 import requests
 import sys
+import time
 
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
@@ -32,6 +36,7 @@ def initSession():
 
 class MyWindow(QMainWindow, form_class):
     isSave = False
+    delProcess = False
 
     commentGallNo = []
     postGallNo = []
@@ -47,8 +52,10 @@ class MyWindow(QMainWindow, form_class):
         self.isSaveAccount.stateChanged.connect(self.mgrAccount)
         self.commentGallList.setDisabled(True)
         self.delComment.setDisabled(True)
+        self.delComment.clicked.connect(self.cleanComment)
         self.postGallList.setDisabled(True)
         self.delPost.setDisabled(True)
+        self.delPost.clicked.connect(self.cleanPost)
         self.loginButton.clicked.connect(self.dcLogin)
         self.devInfoButton.clicked.connect(self.devInfoMsg)
         self.idBox.returnPressed.connect(self.focusEvent)
@@ -219,6 +226,148 @@ class MyWindow(QMainWindow, form_class):
 
         self.totalPost.setText("전체 게시글 : %s개" % num)
 
+    # JS For decoding Service Code
+    def decodeServiceCode(self, _svc, _r):
+        _r_key = 'yL/M=zNa0bcPQdReSfTgUhViWjXkYIZmnpo+qArOBs1Ct2D3uE4Fv5G6wHl78xJ9K'
+        _r = re.sub('[^A-Za-z0-9+/=]', '', _r)
+
+        tmp = ''
+        i = 0
+        for a in [_r[i * 4:(i + 1) * 4] for i in range((len(_r) + 3) // 4)]:
+            t, f, d, h = [_r_key.find(x) for x in a]
+            tmp += chr(t << 2 | f >> 4)
+            if d != 64:
+                tmp += chr((15 & f) << 4 | (d >> 2))
+            if h != 64:
+                tmp += chr((3 & d) << 6 | h)
+        _r = str(int(tmp[0]) + 4) + tmp[1:]
+        if int(tmp[0]) > 5:
+            _r = str(int(tmp[0]) - 5) + tmp[1:]
+
+        _r = [float(x) for x in _r.split(',')]
+        t = ''
+        for i in range(len(_r)):
+            t += chr(int(2 * (_r[i] - i - 1) / (13 - i - 1)))
+        return _svc[0:len(_svc) - 10] + t
+
+    def cleanComment(self):
+        self.delProcess = True
+
+        self.delComment.setText("삭제 중지")
+        self.delComment.clicked.disconnect()
+        self.delComment.clicked.connect(self.cancelCommentDelProcess)
+        self.delPost.setDisabled(True)
+
+        dcid = self.idBox.text()
+        idx = self.commentGallList.currentIndex()
+        gall_url = self.commentGallNo[idx]
+
+        self.cleanCommentThread = (threading.Thread(target=self.cleanProcess, args=(dcid, idx, gall_url)))
+        self.cleanCommentThread.start()
+
+    def cleanPost(self):
+        self.delProcess = True
+
+        self.delPost.setText("삭제 중지")
+        self.delPost.clicked.disconnect()
+        self.delPost.clicked.connect(self.cancelPostDelProcess)
+        self.delComment.setDisabled(True)
+
+        dcid = self.idBox.text()
+        idx = self.commentGallList.currentIndex()
+        gall_url = self.postGallNo[idx]
+
+        self.cleanPostThread = (threading.Thread(target=self.cleanProcess, args=(dcid, idx, gall_url)))
+        self.cleanPostThread.start()
+
+    def cleanProcess(self, dcid, idx, gall_url):
+        while self.delProcess:
+            # COMMENT DELETE Headers
+            COMMENT_DELETE_REQ_HEADERS = {
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Connection": "keep-alive",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Host": "gallog.dcinside.com",
+                "Origin": "https://gallog.dcinside.com",
+                "Referer": "https://gallog.dcinside.com/" + gall_url,
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-origin",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+
+            # Parse Posts
+            gallog_comments = sess.get("https://gallog.dcinside.com/" + gall_url)
+            comments_parsed = lxml.html.fromstring(gallog_comments.text)
+
+            # Get num
+            if idx == 0:
+                num = \
+                comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/div[1]/button[1]/span')[
+                    0].text.replace(",", "")
+            else:
+                num = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/h2/span[3]')[
+                    0].text.replace(",", "")
+            num = re.findall("\d+", num)[0]
+
+            if "/comment" in gall_url:
+                self.totalComment.setText("전체 댓글 : %s개" % num)
+            else:
+                self.totalPost.setText("전체 게시글 : %s개" % num)
+
+            # Get Values for Service Code
+            hidden_r = comments_parsed.xpath('//*[@id="container"]/article/div/section/script[2]')[0].text.strip()
+            hidden_r = re.findall("_d\('([\w\0-Z]*)'\)", hidden_r)[0]
+            hidden_svc_code = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/input')[0].get("value")
+
+            # Generate Service Code
+            svc_code = self.decodeServiceCode(hidden_svc_code, hidden_r)
+
+            # Get Post Information
+            comment_gall = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]/div[3]/span/a')[0].text
+            comment_no = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]')[0].get(
+                "data-no")
+            comment_delete_url = "https://gallog.dcinside.com/" + dcid + "/ajax/log_list_ajax/delete"
+
+            COMMENT_DELETE_REQ_DATA = {
+                "ci_t": sess.cookies['ci_c'],
+                "no": comment_no,
+                "service_code": svc_code
+            }
+
+            # POST & GET Result
+            delete_result = sess.post(comment_delete_url, data=COMMENT_DELETE_REQ_DATA, headers=COMMENT_DELETE_REQ_HEADERS)
+            result = json.loads(delete_result.text)['result']
+
+            # IF reCaptcha
+            if result == "captcha":
+                pass
+
+            time.sleep(1)
+
+            print(f'GallName: {comment_gall} / Num : {comment_no} / Result = {result}')
+
+    def cancelCommentDelProcess(self):
+        self.delProcess = False
+
+        self.commentGallSelectionChanged()
+
+        self.delComment.setText("댓글 삭제")
+        self.delComment.clicked.disconnect()
+        self.delComment.clicked.connect(self.cleanComment)
+        self.delPost.setDisabled(False)
+
+    def cancelPostDelProcess(self):
+        self.delProcess = False
+
+        self.postGallSelectionChanged()
+
+        self.delPost.setText("게시글 삭제")
+        self.delPost.clicked.disconnect()
+        self.delPost.clicked.connect(self.cleanPost)
+        self.delComment.setDisabled(False)
 
     def mgrAccount(self):
         if self.isSaveAccount.isChecked():
