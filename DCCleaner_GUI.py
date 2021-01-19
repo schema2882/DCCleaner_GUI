@@ -176,6 +176,12 @@ class MyWindow(QMainWindow, form_class):
         self.log.setText("성공적으로 로그아웃하였습니다.")
 
     def getGallList(self, dcid):
+        # Clear Old Data
+        self.commentGallNo.clear()
+        self.commentGallList.clear()
+        self.postGallNo.clear()
+        self.postGallList.clear()
+
         # Get Gallog
         comment_gallog = sess.get("https://gallog.dcinside.com/" + dcid + "/comment")
         comment_gallog_parsed = BeautifulSoup(comment_gallog.text, "lxml")
@@ -217,17 +223,21 @@ class MyWindow(QMainWindow, form_class):
 
     def commentGallSelectionChanged(self):
         idx = self.commentGallList.currentIndex()
-        gall_url = self.commentGallNo[idx]
 
-        num = self.getGallTotalNum(gall_url, idx)
-        self.totalComment.setText("전체 댓글 : %s개" % num)
+        if idx != -1:
+            gall_url = self.commentGallNo[idx]
+
+            num = self.getGallTotalNum(gall_url, idx)
+            self.totalComment.setText("전체 댓글 : %s개" % num)
 
     def postGallSelectionChanged(self):
         idx = self.postGallList.currentIndex()
-        gall_url = self.postGallNo[idx]
 
-        num = self.getGallTotalNum(gall_url, idx)
-        self.totalPost.setText("전체 게시글 : %s개" % num)
+        if idx != -1:
+            gall_url = self.postGallNo[idx]
+
+            num = self.getGallTotalNum(gall_url, idx)
+            self.totalPost.setText("전체 게시글 : %s개" % num)
 
     def getGallTotalNum(self, gall_url, idx):
         # Get Gallog
@@ -318,33 +328,46 @@ class MyWindow(QMainWindow, form_class):
             gallog = sess.get("https://gallog.dcinside.com/" + gall_url)
             gallog_parsed = lxml.html.fromstring(gallog.text)
 
-            # Refresh Total Num
-            if idx == 0:
-                num = \
-                gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/div[1]/button[1]/span')[
-                    0].text.replace(",", "")
-            else:
-                num = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/h2/span[3]')[
-                    0].text.replace(",", "")
-            num = re.findall("\d+", num)[0]
+            try:
+                # Refresh Total Num
+                if idx == 0:
+                    num = \
+                    gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/div[1]/button[1]/span')[
+                        0].text.replace(",", "")
+                else:
+                    num = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/h2/span[3]')[
+                        0].text.replace(",", "")
+                num = re.findall("\d+", num)[0]
 
-            if "/comment" in gall_url:
-                self.totalComment.setText("전체 댓글 : %s개" % num)
-            else:
-                self.totalPost.setText("전체 게시글 : %s개" % num)
 
-            # Get Values for Service Code
-            hidden_r = gallog_parsed.xpath('//*[@id="container"]/article/div/section/script[2]')[0].text.strip()
-            hidden_r = re.findall("_d\('([\w\0-Z]*)'\)", hidden_r)[0]
-            hidden_svc_code = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/input')[0].get("value")
+                if "/comment" in gall_url:
+                    self.totalComment.setText("전체 댓글 : %s개" % num)
+                else:
+                    self.totalPost.setText("전체 게시글 : %s개" % num)
 
-            # Generate Service Code
-            svc_code = self.decodeServiceCode(hidden_svc_code, hidden_r)
+                # Get Values for Service Code
+                hidden_r = gallog_parsed.xpath('//*[@id="container"]/article/div/section/script[2]')[0].text.strip()
+                hidden_r = re.findall("_d\('([\w\0-Z]*)'\)", hidden_r)[0]
+                hidden_svc_code = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/input')[0].get("value")
 
-            # Get Information
-            gall = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]/div[3]/span/a')[0].text
-            no = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]')[0].get(
-                "data-no")
+                # Generate Service Code
+                svc_code = self.decodeServiceCode(hidden_svc_code, hidden_r)
+
+                # Get Information
+                gall = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]/div[3]/span/a')[0].text
+                no = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]')[0].get(
+                        "data-no")
+            except IndexError:
+                if "/comment" in gall_url:
+                    self.cancelCommentDelProcess()
+                else:
+                    self.cancelPostDelProcess()
+                self.log.setText("삭제가 완료되었습니다.")
+                self.getGallList(dcid)
+                self.commentGallList.setCurrentIndex(0)
+                self.postGallList.setCurrentIndex(0)
+                return
+
             delete_url = "https://gallog.dcinside.com/" + dcid + "/ajax/log_list_ajax/delete"
 
             DELETE_REQ_DATA = {
@@ -366,6 +389,7 @@ class MyWindow(QMainWindow, form_class):
                     self.cancelCommentDelProcess()
                 else:
                     self.cancelPostDelProcess()
+                break
             time.sleep(1)
 
     def cancelCommentDelProcess(self):
