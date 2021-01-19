@@ -41,6 +41,7 @@ class MyWindow(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setFixedSize(361, 634)
         initSession()
         self.loadConf()
         self.isSaveAccount.stateChanged.connect(self.mgrAccount)
