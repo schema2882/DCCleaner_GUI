@@ -152,7 +152,7 @@ class MyWindow(QMainWindow, form_class):
         self.totalPost.setText("전체 게시글 : ")
         self.postGallList.setDisabled(True)
         self.delPostButton.setDisabled(True)
-        self.loginStatus.setText("로그인 상태 : None")
+        self.loginStatus.setText("로그인 상태 : Not Logged In")
         self.loginButton.setText("로그인")
         self.idBox.setDisabled(False)
         self.pwBox.setDisabled(False)
