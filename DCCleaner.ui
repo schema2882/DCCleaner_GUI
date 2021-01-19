@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>361</width>
-    <height>634</height>
+    <height>744</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -123,7 +123,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>580</y>
+      <y>690</y>
       <width>301</width>
       <height>48</height>
      </rect>
@@ -181,14 +181,14 @@
        <x>30</x>
        <y>70</y>
        <width>281</width>
-       <height>16</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="text">
       <string>전체 게시글 :</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="delPost">
+    <widget class="QPushButton" name="delPostButton">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -230,14 +230,14 @@
        <x>30</x>
        <y>70</y>
        <width>281</width>
-       <height>16</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="text">
       <string>전체 댓글 :</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="delComment">
+    <widget class="QPushButton" name="delCommentButton">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -248,6 +248,32 @@
      </property>
      <property name="text">
       <string>댓글 삭제</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>570</y>
+      <width>341</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Log</string>
+    </property>
+    <widget class="QLabel" name="log">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>311</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>

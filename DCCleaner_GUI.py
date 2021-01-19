@@ -46,16 +46,16 @@ class MyWindow(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setFixedSize(361, 634)
+        self.setFixedSize(361, 744)
         initSession()
         self.loadConf()
         self.isSaveAccount.stateChanged.connect(self.mgrAccount)
         self.commentGallList.setDisabled(True)
-        self.delComment.setDisabled(True)
-        self.delComment.clicked.connect(self.cleanComment)
+        self.delCommentButton.setDisabled(True)
+        self.delCommentButton.clicked.connect(self.cleanComment)
         self.postGallList.setDisabled(True)
-        self.delPost.setDisabled(True)
-        self.delPost.clicked.connect(self.cleanPost)
+        self.delPostButton.setDisabled(True)
+        self.delPostButton.clicked.connect(self.cleanPost)
         self.loginButton.clicked.connect(self.dcLogin)
         self.devInfoButton.clicked.connect(self.devInfoMsg)
         self.idBox.returnPressed.connect(self.focusEvent)
@@ -86,6 +86,7 @@ class MyWindow(QMainWindow, form_class):
             self.idBox.setText(self.config['Account']['id'])
             self.pwBox.setText(self.config['Account']['pw'])
             self.isSaveAccount.setChecked(True)
+        self.log.setText("설정을 불러왔습니다.")
 
     def dcLogin(self):
         dcid = self.idBox.text()
@@ -139,23 +140,25 @@ class MyWindow(QMainWindow, form_class):
             self.getGallList(dcid)
             self.loginButton.clicked.disconnect()
             self.loginButton.clicked.connect(self.dcLogout)
+            self.log.setText("로그인에 성공하였습니다. - " + dcid)
 
     def dcLogout(self):
         initSession()
         self.commentGallList.clear()
         self.totalComment.setText("전체 댓글 : ")
         self.commentGallList.setDisabled(True)
-        self.delComment.setDisabled(True)
+        self.delCommentButton.setDisabled(True)
         self.postGallList.clear()
         self.totalPost.setText("전체 게시글 : ")
         self.postGallList.setDisabled(True)
-        self.delPost.setDisabled(True)
+        self.delPostButton.setDisabled(True)
         self.loginStatus.setText("로그인 상태 : None")
         self.loginButton.setText("로그인")
         self.idBox.setDisabled(False)
         self.pwBox.setDisabled(False)
         self.loginButton.clicked.disconnect()
         self.loginButton.clicked.connect(self.dcLogin)
+        self.log.setText("성공적으로 로그아웃하였습니다.")
 
     def getGallList(self, dcid):
         # Get Gallog
@@ -190,12 +193,12 @@ class MyWindow(QMainWindow, form_class):
         for gallTitle in comment_gall_list:
             self.commentGallList.addItem(gallTitle)
         self.commentGallList.setDisabled(False)
-        self.delComment.setDisabled(False)
+        self.delCommentButton.setDisabled(False)
 
         for gallTitle in post_gall_list:
             self.postGallList.addItem(gallTitle)
         self.postGallList.setDisabled(False)
-        self.delPost.setDisabled(False)
+        self.delPostButton.setDisabled(False)
 
     def commentGallSelectionChanged(self):
         idx = self.commentGallList.currentIndex()
@@ -251,10 +254,10 @@ class MyWindow(QMainWindow, form_class):
     def cleanComment(self):
         self.delProcess = True
 
-        self.delComment.setText("삭제 중지")
-        self.delComment.clicked.disconnect()
-        self.delComment.clicked.connect(self.cancelCommentDelProcess)
-        self.delPost.setDisabled(True)
+        self.delCommentButton.setText("삭제 중지")
+        self.delCommentButton.clicked.disconnect()
+        self.delCommentButton.clicked.connect(self.cancelCommentDelProcess)
+        self.delPostButton.setDisabled(True)
 
         dcid = self.idBox.text()
         idx = self.commentGallList.currentIndex()
@@ -266,10 +269,10 @@ class MyWindow(QMainWindow, form_class):
     def cleanPost(self):
         self.delProcess = True
 
-        self.delPost.setText("삭제 중지")
-        self.delPost.clicked.disconnect()
-        self.delPost.clicked.connect(self.cancelPostDelProcess)
-        self.delComment.setDisabled(True)
+        self.delPostButton.setText("삭제 중지")
+        self.delPostButton.clicked.disconnect()
+        self.delPostButton.clicked.connect(self.cancelPostDelProcess)
+        self.delCommentButton.setDisabled(True)
 
         dcid = self.idBox.text()
         idx = self.commentGallList.currentIndex()
@@ -345,39 +348,41 @@ class MyWindow(QMainWindow, form_class):
 
             time.sleep(1)
 
-            print(f'GallName: {gall} / Num : {no} / Result = {result}')
+            self.log.setText(f'GallName : {gall}\nDataNo : {no}\nResult : {result}')
 
     def cancelCommentDelProcess(self):
         self.delProcess = False
 
         self.commentGallSelectionChanged()
 
-        self.delComment.setText("댓글 삭제")
-        self.delComment.clicked.disconnect()
-        self.delComment.clicked.connect(self.cleanComment)
-        self.delPost.setDisabled(False)
+        self.delCommentButton.setText("댓글 삭제")
+        self.delCommentButton.clicked.disconnect()
+        self.delCommentButton.clicked.connect(self.cleanComment)
+        self.delPostButton.setDisabled(False)
 
     def cancelPostDelProcess(self):
         self.delProcess = False
 
         self.postGallSelectionChanged()
 
-        self.delPost.setText("게시글 삭제")
-        self.delPost.clicked.disconnect()
-        self.delPost.clicked.connect(self.cleanPost)
-        self.delComment.setDisabled(False)
+        self.delPostButton.setText("게시글 삭제")
+        self.delPostButton.clicked.disconnect()
+        self.delPostButton.clicked.connect(self.cleanPost)
+        self.delCommentButton.setDisabled(False)
 
     def mgrAccount(self):
         if self.isSaveAccount.isChecked():
             self.isSave = True
             self.config.set("Settings", "isSaveAccount", "True")
             self.writeConf()
+            self.log.setText("로그인 정보를 저장합니다.")
         else:
             self.isSave = False
             self.config.set("Settings", "isSaveAccount", "False")
             self.config.set('Account', 'id', "null")
             self.config.set('Account', 'pw', "null")
             self.writeConf()
+            self.log.setText("로그인 정보를 저장하지 않습니다.")
 
     def writeConf(self):
         with open('settings.conf', 'w') as conf:
