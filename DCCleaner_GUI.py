@@ -182,6 +182,10 @@ class MyWindow(QMainWindow, form_class):
         self.postGallNo.clear()
         self.postGallList.clear()
 
+        # Prevent unexpected behavior when loading is not finished
+        self.commentGallList.setDisabled(True)
+        self.postGallList.setDisabled(True)
+
         # Get Gallog
         comment_gallog = sess.get("https://gallog.dcinside.com/" + dcid + "/comment")
         comment_gallog_parsed = BeautifulSoup(comment_gallog.text, "lxml")
