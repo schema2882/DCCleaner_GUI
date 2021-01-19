@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
+    <width>372</width>
     <height>600</height>
    </rect>
   </property>
@@ -159,13 +159,13 @@
       <x>10</x>
       <y>250</y>
       <width>341</width>
-      <height>181</height>
+      <height>141</height>
      </rect>
     </property>
     <property name="title">
-     <string>클리너</string>
+     <string>게시글 클리너</string>
     </property>
-    <widget class="QComboBox" name="galleryList">
+    <widget class="QComboBox" name="postGallList">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -188,11 +188,47 @@
       <string>전체 게시글 :</string>
      </property>
     </widget>
-    <widget class="QLabel" name="totalComment">
+    <widget class="QPushButton" name="delPost">
      <property name="geometry">
       <rect>
        <x>30</x>
        <y>100</y>
+       <width>281</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>게시글 삭제</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>400</y>
+      <width>341</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>댓글 클리너</string>
+    </property>
+    <widget class="QComboBox" name="postGallList_2">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>281</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="totalPost_2">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>70</y>
        <width>281</width>
        <height>16</height>
       </rect>
@@ -201,25 +237,12 @@
       <string>전체 댓글 :</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="delPost">
+    <widget class="QPushButton" name="delPost_2">
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>130</y>
-       <width>131</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>게시글 삭제</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="delComment">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>130</y>
-       <width>131</width>
+       <y>100</y>
+       <width>281</width>
        <height>28</height>
       </rect>
      </property>
