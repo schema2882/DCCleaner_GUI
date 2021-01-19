@@ -344,8 +344,11 @@ class MyWindow(QMainWindow, form_class):
 
             # IF reCaptcha
             if result == "captcha":
-                pass
-
+                alertMsgBox("리캡챠 발생!", "리캡챠 오류가 발생하였습니다.<br><a href='https://gallog.dcinside.com/%s'>갤로그</a>에서 수동으로 글을 삭제하여 리캡챠를 해제해주세요." % gall_url)
+                if "/comment" in gall_url:
+                    self.cancelCommentDelProcess()
+                else:
+                    self.cancelPostDelProcess()
             time.sleep(1)
 
             self.log.setText(f'GallName : {gall}\nDataNo : {no}\nResult : {result}')
