@@ -7,6 +7,9 @@ from configparser import ConfigParser
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
+from qt_material import apply_stylesheet
+
+
 form_class = uic.loadUiType("DCCleaner.ui")[0]
 
 
@@ -147,5 +150,6 @@ class MyWindow(QMainWindow, form_class):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MyWindow()
+    apply_stylesheet(app, theme='dark_teal.xml')
     window.show()
     app.exec_()
