@@ -20,7 +20,7 @@
       <x>10</x>
       <y>10</y>
       <width>341</width>
-      <height>221</height>
+      <height>231</height>
      </rect>
     </property>
     <property name="title">
@@ -49,7 +49,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>160</y>
+       <y>170</y>
        <width>281</width>
        <height>21</height>
       </rect>
@@ -106,7 +106,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>190</y>
+       <y>200</y>
        <width>281</width>
        <height>21</height>
       </rect>
@@ -157,13 +157,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>240</y>
+      <y>250</y>
       <width>341</width>
-      <height>171</height>
+      <height>181</height>
      </rect>
     </property>
     <property name="title">
-     <string>갤러리</string>
+     <string>클리너</string>
     </property>
     <widget class="QComboBox" name="galleryList">
      <property name="geometry">
