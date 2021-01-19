@@ -124,12 +124,13 @@ class MyWindow(QMainWindow, form_class):
             self.loginButton.setText("로그아웃")
             self.idBox.setDisabled(True)
             self.pwBox.setDisabled(True)
-            self.loginButton.clicked.connect(self.dcLogout)
             if self.isSave:
                 self.config.set('Account', 'id', dcid)
                 self.config.set('Account', 'pw', dcpw)
                 self.writeConf()
             self.getGallList(dcid)
+            self.loginButton.clicked.disconnect()
+            self.loginButton.clicked.connect(self.dcLogout)
 
     def dcLogout(self):
         initSession()
@@ -143,6 +144,7 @@ class MyWindow(QMainWindow, form_class):
         self.postGallList.clear()
         self.postGallList.setDisabled(True)
         self.delPost.setDisabled(True)
+        self.loginButton.clicked.disconnect()
         self.loginButton.clicked.connect(self.dcLogin)
 
     def getGallList(self, dcid):
