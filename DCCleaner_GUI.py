@@ -6,6 +6,7 @@ import re
 import requests
 import sys
 import time
+import webbrowser
 
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
@@ -16,6 +17,8 @@ from PyQt5 import uic
 from qt_material import apply_stylesheet
 
 form_class = uic.loadUiType("DCCleaner.ui")[0]
+
+VER = 1.0
 
 
 def alertMsgBox(title, text):
@@ -48,6 +51,7 @@ class MyWindow(QMainWindow, form_class):
         self.setupUi(self)
         self.setFixedSize(361, 744)
         initSession()
+        #self.updateAlert()
         self.loadConf()
         self.isSaveAccount.stateChanged.connect(self.mgrAccount)
         self.commentGallList.setDisabled(True)
@@ -63,6 +67,17 @@ class MyWindow(QMainWindow, form_class):
         self.idBox.setFocus()
         self.commentGallList.currentIndexChanged.connect(self.commentGallSelectionChanged)
         self.postGallList.currentIndexChanged.connect(self.postGallSelectionChanged)
+
+    def updateAlert(self):
+        verParse = requests.get(
+            "https://raw.githubusercontent.com/SerenityS/DCCleaner_GUI/master/ver.txt")
+        if VER < float(verParse.text):
+            result = QMessageBox.question(self, '업데이트 발견!',
+                                          "디시 클리너를 업데이트 하시겠습니까?\n확인을 누르면 다운로드 링크로 이동합니다.", QMessageBox.Yes |
+                                          QMessageBox.No, QMessageBox.No)
+            if result == QMessageBox.Yes:
+                webbrowser.open("https://github.com/SerenityS/DCCleaner_GUI/releases")
+                sys.exit()
 
     def closeEvent(self, event):
         result = QMessageBox.question(self, 'Are you sure to Exit?',
@@ -392,7 +407,7 @@ class MyWindow(QMainWindow, form_class):
             self.config.write(conf)
 
     def devInfoMsg(self):
-        alertMsgBox("개발자 정보", "Dev : qwertycvb(SerenityS)<br>E-Mail : jins4218@gmail.com<br>Github : <a href='https://github.com/SerenityS'>https://github.com/SerenityS</a><br><br><a href='https://github.com/augustapple/ThanosCleaner'>Inspired by ThanosCleaner</a>")
+        alertMsgBox("개발자 정보", "DCCleaner V1.0<br>Dev : qwertycvb(SerenityS)<br>E-Mail : jins4218@gmail.com<br>Github : <a href='https://github.com/SerenityS'>https://github.com/SerenityS</a><br><br><a href='https://github.com/augustapple/ThanosCleaner'>Inspired by ThanosCleaner</a>")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
