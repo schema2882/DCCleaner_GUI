@@ -128,7 +128,7 @@ class MyWindow(QMainWindow, form_class):
         if "history.back(-1);" in try_login.text:
             alertMsgBox("로그인 실패!", "ID와 PW를 확인해주세요.")
         else:
-            self.loginStatus.setText(f'로그인 상태 : {dcid}')
+            self.loginStatus.setText("로그인 상태 : " + dcid)
             self.loginButton.setText("로그아웃")
             self.idBox.setDisabled(True)
             self.pwBox.setDisabled(True)
@@ -142,10 +142,6 @@ class MyWindow(QMainWindow, form_class):
 
     def dcLogout(self):
         initSession()
-        self.loginStatus.setText("로그인 상태 : None")
-        self.loginButton.setText("로그인")
-        self.idBox.setDisabled(False)
-        self.pwBox.setDisabled(False)
         self.commentGallList.clear()
         self.totalComment.setText("전체 댓글 : ")
         self.commentGallList.setDisabled(True)
@@ -154,6 +150,10 @@ class MyWindow(QMainWindow, form_class):
         self.totalPost.setText("전체 게시글 : ")
         self.postGallList.setDisabled(True)
         self.delPost.setDisabled(True)
+        self.loginStatus.setText("로그인 상태 : None")
+        self.loginButton.setText("로그인")
+        self.idBox.setDisabled(False)
+        self.pwBox.setDisabled(False)
         self.loginButton.clicked.disconnect()
         self.loginButton.clicked.connect(self.dcLogin)
 
@@ -162,15 +162,9 @@ class MyWindow(QMainWindow, form_class):
         comment_gallog = sess.get("https://gallog.dcinside.com/" + dcid + "/comment")
         comment_gallog_parsed = BeautifulSoup(comment_gallog.text, "lxml")
 
-        post_gallog = sess.get("https://gallog.dcinside.com/" + dcid + "/posting")
-        post_gallog_parsed = BeautifulSoup(post_gallog.text, "lxml")
-
         # Parse optionbox for Listing All Galleries
         comment_option_box = comment_gallog_parsed.find_all(class_="option_box")[1]
         comment_option_box = comment_option_box.find_all("li")
-
-        post_option_box = post_gallog_parsed.find_all(class_="option_box")[1]
-        post_option_box = post_option_box.find_all("li")
 
         comment_gall_list = ["전체 갤러리"]
         self.commentGallNo += [dcid + "/comment"]
@@ -178,43 +172,48 @@ class MyWindow(QMainWindow, form_class):
             comment_gall_list += [comment_option_box[gall].text]
             self.commentGallNo += [comment_option_box[gall]['onclick'][15:-1]]
 
+        # Get Gallog
+        post_gallog = sess.get("https://gallog.dcinside.com/" + dcid + "/posting")
+        post_gallog_parsed = BeautifulSoup(post_gallog.text, "lxml")
+
+        # Parse optionbox for Listing All Galleries
+        post_option_box = post_gallog_parsed.find_all(class_="option_box")[1]
+        post_option_box = post_option_box.find_all("li")
+
         post_gall_list = ["전체 갤러리"]
         self.postGallNo += [dcid + "/posting"]
         for gall in range(1, len(post_option_box)):
             post_gall_list += [post_option_box[gall].text]
             self.postGallNo += [post_option_box[gall]['onclick'][15:-1]]
 
-        for s in comment_gall_list:
-            self.commentGallList.addItem(s)
+        # Add Gallary Title to QComboBox
+        for gallTitle in comment_gall_list:
+            self.commentGallList.addItem(gallTitle)
         self.commentGallList.setDisabled(False)
         self.delComment.setDisabled(False)
 
-        for s in post_gall_list:
-            self.postGallList.addItem(s)
+        for gallTitle in post_gall_list:
+            self.postGallList.addItem(gallTitle)
         self.postGallList.setDisabled(False)
         self.delPost.setDisabled(False)
 
     def commentGallSelectionChanged(self):
         idx = self.commentGallList.currentIndex()
+        gall_url = self.commentGallNo[idx]
 
-        # Get Gallog
-        gallog = sess.get("https://gallog.dcinside.com/" + self.commentGallNo[idx])
-        gallog_parsed = lxml.html.fromstring(gallog.text)
-
-        # Get num
-        if idx == 0:
-            num = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/div[1]/button[1]/span')[0].text.replace(",", "")
-        else:
-            num = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/h2/span[3]')[0].text.replace(",", "")
-        num = re.findall("\d+", num)[0]
-
+        num = self.getGallTotalNum(gall_url, idx)
         self.totalComment.setText("전체 댓글 : %s개" % num)
 
     def postGallSelectionChanged(self):
         idx = self.postGallList.currentIndex()
+        gall_url = self.postGallNo[idx]
 
+        num = self.getGallTotalNum(gall_url, idx)
+        self.totalPost.setText("전체 게시글 : %s개" % num)
+
+    def getGallTotalNum(self, gall_url, idx):
         # Get Gallog
-        gallog = sess.get("https://gallog.dcinside.com/" + self.postGallNo[idx])
+        gallog = sess.get("https://gallog.dcinside.com/" + gall_url)
         gallog_parsed = lxml.html.fromstring(gallog.text)
 
         # Get num
@@ -222,9 +221,8 @@ class MyWindow(QMainWindow, form_class):
             num = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/div[1]/button[1]/span')[0].text.replace(",", "")
         else:
             num = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/h2/span[3]')[0].text.replace(",", "")
-        num = re.findall("\d+", num)[0]
+        return (re.findall("\d+", num)[0])
 
-        self.totalPost.setText("전체 게시글 : %s개" % num)
 
     # JS For decoding Service Code
     def decodeServiceCode(self, _svc, _r):
@@ -282,8 +280,8 @@ class MyWindow(QMainWindow, form_class):
 
     def cleanProcess(self, dcid, idx, gall_url):
         while self.delProcess:
-            # COMMENT DELETE Headers
-            COMMENT_DELETE_REQ_HEADERS = {
+            # DELETE Headers
+            DELETE_REQ_HEADERS = {
                 "Accept": "application/json, text/javascript, */*; q=0.01",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -298,17 +296,17 @@ class MyWindow(QMainWindow, form_class):
                 "X-Requested-With": "XMLHttpRequest"
             }
 
-            # Parse Posts
-            gallog_comments = sess.get("https://gallog.dcinside.com/" + gall_url)
-            comments_parsed = lxml.html.fromstring(gallog_comments.text)
+            # Parse Gallog
+            gallog = sess.get("https://gallog.dcinside.com/" + gall_url)
+            gallog_parsed = lxml.html.fromstring(gallog.text)
 
-            # Get num
+            # Refresh Total Num
             if idx == 0:
                 num = \
-                comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/div[1]/button[1]/span')[
+                gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/div[1]/button[1]/span')[
                     0].text.replace(",", "")
             else:
-                num = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/h2/span[3]')[
+                num = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/header/div/h2/span[3]')[
                     0].text.replace(",", "")
             num = re.findall("\d+", num)[0]
 
@@ -318,27 +316,27 @@ class MyWindow(QMainWindow, form_class):
                 self.totalPost.setText("전체 게시글 : %s개" % num)
 
             # Get Values for Service Code
-            hidden_r = comments_parsed.xpath('//*[@id="container"]/article/div/section/script[2]')[0].text.strip()
+            hidden_r = gallog_parsed.xpath('//*[@id="container"]/article/div/section/script[2]')[0].text.strip()
             hidden_r = re.findall("_d\('([\w\0-Z]*)'\)", hidden_r)[0]
-            hidden_svc_code = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/input')[0].get("value")
+            hidden_svc_code = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/input')[0].get("value")
 
             # Generate Service Code
             svc_code = self.decodeServiceCode(hidden_svc_code, hidden_r)
 
-            # Get Post Information
-            comment_gall = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]/div[3]/span/a')[0].text
-            comment_no = comments_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]')[0].get(
+            # Get Information
+            gall = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]/div[3]/span/a')[0].text
+            no = gallog_parsed.xpath('//*[@id="container"]/article/div/section/div[1]/div/ul/li[1]')[0].get(
                 "data-no")
-            comment_delete_url = "https://gallog.dcinside.com/" + dcid + "/ajax/log_list_ajax/delete"
+            delete_url = "https://gallog.dcinside.com/" + dcid + "/ajax/log_list_ajax/delete"
 
-            COMMENT_DELETE_REQ_DATA = {
+            DELETE_REQ_DATA = {
                 "ci_t": sess.cookies['ci_c'],
-                "no": comment_no,
+                "no": no,
                 "service_code": svc_code
             }
 
             # POST & GET Result
-            delete_result = sess.post(comment_delete_url, data=COMMENT_DELETE_REQ_DATA, headers=COMMENT_DELETE_REQ_HEADERS)
+            delete_result = sess.post(delete_url, data=DELETE_REQ_DATA, headers=DELETE_REQ_HEADERS)
             result = json.loads(delete_result.text)['result']
 
             # IF reCaptcha
@@ -347,7 +345,7 @@ class MyWindow(QMainWindow, form_class):
 
             time.sleep(1)
 
-            print(f'GallName: {comment_gall} / Num : {comment_no} / Result = {result}')
+            print(f'GallName: {gall} / Num : {no} / Result = {result}')
 
     def cancelCommentDelProcess(self):
         self.delProcess = False
