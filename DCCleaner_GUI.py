@@ -249,6 +249,9 @@ class MyWindow(QMainWindow, form_class):
     def getGallTotalNum(self, gall_url, idx):
         # Get Gallog
         gallog = sess.get("https://gallog.dcinside.com/" + gall_url)
+        if gallog.text == "":
+            alertMsgBox("IP 차단 됨!", "IP 차단이 확인되었습니다.\n일정 시간이 지난 후 이용해주세요.\n확인 버튼을 누르시면 클리너를 종료합니다.")
+            sys.exit()
         gallog_parsed = lxml.html.fromstring(gallog.text)
 
         # Get num
@@ -337,6 +340,9 @@ class MyWindow(QMainWindow, form_class):
 
             # Parse Gallog
             gallog = sess.get("https://gallog.dcinside.com/" + gall_url)
+            if gallog.text == "":
+                alertMsgBox("IP 차단 됨!", "IP 차단이 확인되었습니다.\n일정 시간이 지난 후 이용해주세요.\n확인 버튼을 누르시면 클리너를 종료합니다.")
+                sys.exit()
             gallog_parsed = lxml.html.fromstring(gallog.text)
 
             try:
