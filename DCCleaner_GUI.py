@@ -369,8 +369,10 @@ class MyWindow(QMainWindow, form_class):
                         "data-no")
             except IndexError:
                 if "/comment" in gall_url:
+                    self.commentGallList.setCurrentIndex(0)
                     self.cancelCommentDelProcess()
                 else:
+                    self.postGallList.setCurrentIndex(0)
                     self.cancelPostDelProcess()
                 self.log.setText("삭제가 완료되었습니다.")
                 self.getGallList(dcid)
