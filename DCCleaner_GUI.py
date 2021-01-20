@@ -439,7 +439,7 @@ class MyWindow(QMainWindow, form_class):
             self.config.write(conf)
 
     def devInfoMsg(self):
-        alertMsgBox("개발자 정보", "DCCleaner V1.0<br>Dev : qwertycvb(SerenityS)<br>E-Mail : jins4218@gmail.com<br>Github : <a href='https://github.com/SerenityS'>https://github.com/SerenityS</a><br><br><a href='https://github.com/augustapple/ThanosCleaner'>Inspired by ThanosCleaner</a>")
+        alertMsgBox("개발자 정보", "DCCleaner V%.1f<br>Dev : qwertycvb(SerenityS)<br>E-Mail : jins4218@gmail.com<br>Github : <a href='https://github.com/SerenityS'>https://github.com/SerenityS</a><br><br><a href='https://github.com/augustapple/ThanosCleaner'>Inspired by ThanosCleaner</a>" % VER)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
