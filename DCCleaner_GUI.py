@@ -188,6 +188,9 @@ class MyWindow(QMainWindow, form_class):
 
         # Get Gallog
         comment_gallog = sess.get("https://gallog.dcinside.com/" + dcid + "/comment")
+        if comment_gallog.text == "":
+            alertMsgBox("IP 차단 됨!", "IP 차단이 확인되었습니다.\n일정 시간이 지난 후 이용해주세요.\n확인 버튼을 누르시면 클리너를 종료합니다.")
+            sys.exit()
         comment_gallog_parsed = BeautifulSoup(comment_gallog.text, "lxml")
 
         # Parse optionbox for Listing All Galleries
@@ -345,7 +348,6 @@ class MyWindow(QMainWindow, form_class):
                         0].text.replace(",", "")
                 num = re.findall("\d+", num)[0]
 
-
                 if "/comment" in gall_url:
                     self.totalComment.setText("전체 댓글 : %s개" % num)
                 else:
@@ -440,6 +442,7 @@ class MyWindow(QMainWindow, form_class):
 
     def devInfoMsg(self):
         alertMsgBox("개발자 정보", "DCCleaner V%.1f<br>Dev : qwertycvb(SerenityS)<br>E-Mail : jins4218@gmail.com<br>Github : <a href='https://github.com/SerenityS'>https://github.com/SerenityS</a><br><br><a href='https://github.com/augustapple/ThanosCleaner'>Inspired by ThanosCleaner</a>" % VER)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
