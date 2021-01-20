@@ -289,6 +289,7 @@ class MyWindow(QMainWindow, form_class):
         self.delCommentButton.setText("삭제 중지")
         self.delCommentButton.clicked.disconnect()
         self.delCommentButton.clicked.connect(self.cancelCommentDelProcess)
+        self.commentGallList.setDisabled(True)
         self.delPostButton.setDisabled(True)
         self.loginButton.setDisabled(True)
 
@@ -305,6 +306,7 @@ class MyWindow(QMainWindow, form_class):
         self.delPostButton.setText("삭제 중지")
         self.delPostButton.clicked.disconnect()
         self.delPostButton.clicked.connect(self.cancelPostDelProcess)
+        self.postGallList.setDisabled(True)
         self.delCommentButton.setDisabled(True)
         self.loginButton.setDisabled(True)
 
@@ -408,6 +410,7 @@ class MyWindow(QMainWindow, form_class):
         self.delCommentButton.setText("댓글 삭제")
         self.delCommentButton.clicked.disconnect()
         self.delCommentButton.clicked.connect(self.cleanComment)
+        self.commentGallList.setDisabled(False)
         self.delPostButton.setDisabled(False)
         self.loginButton.setDisabled(False)
 
@@ -419,6 +422,7 @@ class MyWindow(QMainWindow, form_class):
         self.delPostButton.setText("게시글 삭제")
         self.delPostButton.clicked.disconnect()
         self.delPostButton.clicked.connect(self.cleanPost)
+        self.postGallList.setDisabled(False)
         self.delCommentButton.setDisabled(False)
         self.loginButton.setDisabled(False)
 
