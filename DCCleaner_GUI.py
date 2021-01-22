@@ -398,8 +398,6 @@ class MyWindow(QMainWindow, form_class):
             delete_result = sess.post(delete_url, data=DELETE_REQ_DATA, headers=DELETE_REQ_HEADERS)
             result = json.loads(delete_result.text)['result']
 
-            self.log.setText(f'GallName : {gall}\nDataNo : {no}\nResult : {result}')
-
             # IF reCaptcha
             if result == "captcha":
                 alertMsgBox("리캡챠 발생!", "리캡챠 오류가 발생하였습니다.<br><a href='https://gallog.dcinside.com/%s'>갤로그</a>에서 수동으로 글을 삭제하여 리캡챠를 해제해주세요." % gall_url)
@@ -408,6 +406,18 @@ class MyWindow(QMainWindow, form_class):
                 else:
                     self.cancelPostDelProcess()
                 break
+
+            if result == "fail":
+                if "/comment" in gall_url:
+                    self.cancelCommentDelProcess()
+                else:
+                    self.cancelPostDelProcess()
+                break
+                alertMsgBox("오류 발생!",
+                            "디시 내부 오류로 삭제에 실패하였습니다.<br><a href='https://gallog.dcinside.com/%s'>갤로그</a>에서 수동으로 1~2개의 글을 삭제하여주세요." % gall_url)
+
+                self.log.setText(f'GallName : {gall}\nDataNo : {no}\nResult : {result}')
+
             time.sleep(1)
 
     def cancelCommentDelProcess(self):
