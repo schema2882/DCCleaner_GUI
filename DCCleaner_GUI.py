@@ -235,6 +235,10 @@ class MyWindow(QMainWindow, form_class):
             gall_url = self.commentGallNo[idx]
 
             num = self.getGallTotalNum(gall_url, idx)
+            if num == '0':
+                self.delCommentButton.setDisabled(True)
+            else:
+                self.delCommentButton.setDisabled(False)
             self.totalComment.setText("전체 댓글 : %s개" % num)
 
     def postGallSelectionChanged(self):
@@ -244,6 +248,10 @@ class MyWindow(QMainWindow, form_class):
             gall_url = self.postGallNo[idx]
 
             num = self.getGallTotalNum(gall_url, idx)
+            if num == '0':
+                self.delPostButton.setDisabled(True)
+            else:
+                self.delPostButton.setDisabled(False)
             self.totalPost.setText("전체 게시글 : %s개" % num)
 
     def getGallTotalNum(self, gall_url, idx):
