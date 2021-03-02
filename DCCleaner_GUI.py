@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 
 import lxml.html
@@ -16,7 +17,12 @@ from PyQt5 import uic
 
 from qt_material import apply_stylesheet
 
-form_class = uic.loadUiType("DCCleaner.ui")[0]
+def resource_path(relative_path):
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+form = resource_path('DCCleaner.ui')
+form_class = uic.loadUiType(form)[0]
 
 VER = 1.0
 
