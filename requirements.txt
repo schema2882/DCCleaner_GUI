@@ -1,0 +1,6 @@
+lxml
+bs4
+PyQt5
+PyQt5-stubs
+qt-material
+requests
